@@ -1,212 +1,133 @@
 #include <iostream>
-#include <fstream> // Manejo de archivos
-#include <string>  // Cadenas de caracteres
-#include <ctime>   // Para fecha de noticias
-
+#include <string>
 using namespace std;
 
-// -------------------------------
-// --- FUNCIONES DE ESTUDIANTES ---
-// -------------------------------
+// Estructura para guardar datos de un usuario
+struct Usuario {
+    int id;
+    string nombre;
+    string correo;
+    string contrasena;
+};
 
-void agregarEstudiante() {
-    ofstream archivo("contactos.txt", ios::app);
+// Estructura para guardar datos de una noticia
+struct Noticia {
+    int codigo;
+    string titulo;
+    string autor;
+    string contenido;
+    int anio;
+};
 
-    if (!archivo) {
-        cout << "Error al abrir el archivo de estudiantes\n";
-        return;
-    }
-
-    string nombre, grado, seccion;
-
-    cout << "\n--- Registrar Estudiante ---\n";
-    // Limpiamos el buffer para usar getline correctamente
+// Funcion para registrar un usuario
+void registrarUsuario(Usuario usuarios[], int &cantidadUsuarios) {
+    cout << "\n--- Registro de Usuario ---\n";
+    cout << "Ingrese ID del usuario: ";
+    cin >> usuarios[cantidadUsuarios].id;
     cin.ignore();
-    cout << "Ingrese nombre completo: ";
-    getline(cin, nombre);
 
-    cout << "Ingrese grado: ";
-    getline(cin, grado);
+    cout << "Ingrese nombre del usuario: ";
+    getline(cin, usuarios[cantidadUsuarios].nombre);
 
-    cout << "Ingrese seccion: ";
-    getline(cin, seccion);
+    cout << "Ingrese correo del usuario: ";
+    getline(cin, usuarios[cantidadUsuarios].correo);
 
-    // Guardamos: nombre,grado,seccion
-    archivo << nombre << "," << grado << "," << seccion << endl;
-    cout << "Registro exitoso\n";
+    cout << "Ingrese contrasena del usuario: ";
+    getline(cin, usuarios[cantidadUsuarios].contrasena);
 
-    archivo.close();
+    cout << "\nUsuario registrado exitosamente: " << usuarios[cantidadUsuarios].nombre << "\n";
+    cantidadUsuarios++;
 }
 
-void mostrarEstudiantes() {
-    ifstream archivo("contactos.txt");
+// Funcion para registrar una noticia
+void registrarNoticia(Noticia noticias[], int &cantidadNoticias) {
+    cout << "\n--- Registro de Noticia ---\n";
+    cout << "Ingrese codigo de la noticia: ";
+    cin >> noticias[cantidadNoticias].codigo;
 
-    if (!archivo) {
-        cout << "No hay estudiantes registrados\n";
-        return;
-    }
+    cout << "Ingrese anio de publicacion: ";
+    cin >> noticias[cantidadNoticias].anio;
+    cin.ignore();
 
-    string linea;
-    cout << "\n--- Lista de Estudiantes ---\n";
+    cout << "Ingrese titulo de la noticia: ";
+    getline(cin, noticias[cantidadNoticias].titulo);
 
-    while (getline(archivo, linea)) {
-        // Logica para separar los 3 campos: nombre, grado, seccion
-        size_t pos1 = linea.find(",");
-        string nombre = linea.substr(0, pos1);
+    cout << "Ingrese autor de la noticia: ";
+    getline(cin, noticias[cantidadNoticias].autor);
 
-        string resto = linea.substr(pos1 + 1);
-        size_t pos2 = resto.find(",");
-        string grado = resto.substr(0, pos2);
-        string seccion = resto.substr(pos2 + 1);
+    cout << "Ingrese contenido de la noticia: ";
+    getline(cin, noticias[cantidadNoticias].contenido);
 
-        cout << "Nombre: " << nombre << " | Grado: " << grado << " | Seccion: " << seccion << "\n";
-    }
-
-    archivo.close();
+    cout << "\nNoticia registrada exitosamente: " << noticias[cantidadNoticias].titulo << "\n";
+    cantidadNoticias++;
 }
 
-void buscarEstudiante() {
-    ifstream archivo("contactos.txt");
-
-    if (!archivo) {
-        cout << "No hay estudiantes registrados\n";
-        return;
-    }
-
-    string linea, nombreBuscar;
-    bool encontrado = false;
-
-    // Limpiamos el buffer para leer el nombre completo a buscar
-    cin.ignore();
-    cout << "\nIngrese nombre a buscar: ";
-    getline(cin, nombreBuscar);
-
-    while (getline(archivo, linea)) {
-        // Logica para extraer el nombre
-        size_t pos1 = linea.find(",");
-        string nombre = linea.substr(0, pos1);
-
-        string resto = linea.substr(pos1 + 1);
-        size_t pos2 = resto.find(",");
-        string grado = resto.substr(0, pos2);
-        string seccion = resto.substr(pos2 + 1);
-
-        if (nombre == nombreBuscar) {
-            cout << "\nEstudiante encontrado:\n";
-            cout << "Nombre: " << nombre << " | Grado: " << grado << " | Seccion: " << seccion << "\n";
-            encontrado = true;
+// Funcion para listar las noticias registradas
+void listarNoticias(Noticia noticias[], int cantidadNoticias) {
+    cout << "\n--- Listado de Noticias ---\n";
+    if (cantidadNoticias == 0) {
+        cout << "No hay noticias registradas.\n";
+    } else {
+        for (int i = 0; i < cantidadNoticias; i++) {
+            cout << "Titulo: " << noticias[i].titulo
+                 << " | Codigo: " << noticias[i].codigo
+                 << " | Anio: " << noticias[i].anio
+                 << " | Autor: " << noticias[i].autor
+                 << "\nContenido: " << noticias[i].contenido << "\n\n";
         }
     }
-
-    if (!encontrado) {
-        cout << "Estudiante no encontrado\n";
-    }
-
-    archivo.close();
 }
 
-// -------------------------------
-// --- FUNCIONES DE NOTICIAS ---
-// -------------------------------
-
-void agregarNoticia() {
-    ofstream archivo("noticias.txt", ios::app);
-
-    if (!archivo) {
-        cout << "Error al abrir el archivo de noticias\n";
-        return;
+// Funcion para buscar una noticia por codigo
+string buscarNoticia(Noticia noticias[], int codigo, int cantidadNoticias) {
+    for (int i = 0; i < cantidadNoticias; i++) {
+        if (noticias[i].codigo == codigo) {
+            return noticias[i].titulo;
+        }
     }
-
-    string titulo, cuerpo;
-
-    // Obtenemos la fecha actual (ctime no usa acentos)
-    time_t tiempo = time(0);
-    tm* info = localtime(&tiempo);
-    string fecha = to_string(info->tm_mday) + "/" +
-                    to_string(1 + info->tm_mon) + "/" +
-                    to_string(1900 + info->tm_year);
-
-    cin.ignore();
-    cout << "\nIngrese titulo: ";
-    getline(cin, titulo);
-
-    cout << "Ingrese contenido: ";
-    getline(cin, cuerpo);
-
-    // Guardamos: Fecha|titulo|cuerpo
-    archivo << fecha << "|" << titulo << "|" << cuerpo << endl;
-    cout << "Noticia registrada\n";
-
-    archivo.close();
+    return "No encontrada";
 }
-
-void mostrarNoticias() {
-    ifstream archivo("noticias.txt");
-
-    if (!archivo) {
-        cout << "No hay noticias registradas\n";
-        return;
-    }
-
-    string linea;
-    int contador = 1;
-
-    cout << "\n--- Noticias del Liceo ---\n";
-
-    while (getline(archivo, linea)) {
-        // Logica para separar los 3 campos: fecha, titulo, cuerpo (separador '|')
-        size_t pos1 = linea.find("|");
-        string fecha = linea.substr(0, pos1);
-
-        string resto = linea.substr(pos1 + 1);
-        size_t pos2 = resto.find("|");
-        string titulo = resto.substr(0, pos2);
-        string cuerpo = resto.substr(pos2 + 1);
-
-        cout << "(" << contador << ") [" << fecha << "] " << titulo << "\n";
-        cout << "Contenido: " << cuerpo << "\n";
-        contador++;
-    }
-
-    archivo.close();
-}
-
-// -------------------------------
-// --- MENU PRINCIPAL ---
-// -------------------------------
 
 int main() {
-    int opcion;
+    Usuario usuarios[20];
+    Noticia noticias[20];
+    int cantidadUsuarios = 0, cantidadNoticias = 0;
+    int opcion = -1;
 
-    do {
-        cout << "\n===== MENU PRINCIPAL =====\n";
-        cout << "1. Registrar estudiante\n";
-        cout << "2. Ver estudiantes\n";
-        cout << "3. Buscar estudiante\n";
-        cout << "4. Registrar noticia\n";
-        cout << "5. Ver noticias\n";
-        cout << "6. Salir\n";
-        cout << "Ingrese opcion: ";
-
-        if (!(cin >> opcion)) {
-            cout << "Entrada invalida\n";
-            cin.clear();
-            cin.ignore(10000, '\n');
-            opcion = 0;
-            continue;
-        }
+    while (opcion != 0) {
+        cout << "\n=== PORTAL WEB DE NOTICIAS ===\n";
+        cout << "1. Registrar Usuario\n";
+        cout << "2. Registrar Noticia\n";
+        cout << "3. Listar Noticias\n";
+        cout << "4. Buscar Noticia\n";
+        cout << "0. Salir\n";
+        cout << "Seleccione una opcion: ";
+        cin >> opcion;
 
         switch (opcion) {
-            case 1: agregarEstudiante(); break;
-            case 2: mostrarEstudiantes(); break;
-            case 3: buscarEstudiante(); break;
-            case 4: agregarNoticia(); break;
-            case 5: mostrarNoticias(); break;
-            case 6: cout << "Hasta luego\n"; break;
-            default: cout << "Opcion no valida\n";
+            case 1:
+                registrarUsuario(usuarios, cantidadUsuarios);
+                break;
+            case 2:
+                registrarNoticia(noticias, cantidadNoticias);
+                break;
+            case 3:
+                listarNoticias(noticias, cantidadNoticias);
+                break;
+            case 4: {
+                int codigoBuscar;
+                cout << "Ingrese codigo de la noticia a buscar: ";
+                cin >> codigoBuscar;
+                cout << "Resultado: " << buscarNoticia(noticias, codigoBuscar, cantidadNoticias) << "\n";
+                break;
+            }
+            case 0:
+                cout << "Saliendo del portal...\n";
+                break;
+            default:
+                cout << "Opcion invalida. Intente de nuevo.\n";
         }
-
-    } while (opcion != 6);
+    }
 
     return 0;
 }
