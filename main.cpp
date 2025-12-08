@@ -1,116 +1,212 @@
 #include <iostream>
+#include <fstream> // Manejo de archivos
+#include <string>  // Cadenas de caracteres
+#include <ctime>   // Para fecha de noticias
 
 using namespace std;
 
-struct Persona {
-    int identificacion;
-    string nombre;
-    int edad;
-};
-struct Libro {
-    int codigo;
-    string nombre;
-    string autor;
-    int year;
-};
+// -------------------------------
+// --- FUNCIONES DE ESTUDIANTES ---
+// -------------------------------
 
-void menu () {
-    cout<<"\n Desea hacer un nuevo registro  \n 1 para si \n 0 para no \n";
-}
-void registrarEstudiante(Persona estudiante[] , int cantidadEstudiantes) {
-     cout<<" \n ingrese identificacion del estudiante \n";
-    cin>>estudiante[cantidadEstudiantes].identificacion;
-    cout<<" \n ingrese Edad del estudiante \n";
-    cin>>estudiante[cantidadEstudiantes].edad;
-    cout<<" \n ingrese el nombre del estudiante \n";
+void agregarEstudiante() {
+    ofstream archivo("contactos.txt", ios::app);
+
+    if (!archivo) {
+        cout << "Error al abrir el archivo de estudiantes\n";
+        return;
+    }
+
+    string nombre, grado, seccion;
+
+    cout << "\n--- Registrar Estudiante ---\n";
+    // Limpiamos el buffer para usar getline correctamente
     cin.ignore();
-    getline(cin, estudiante[cantidadEstudiantes].nombre);
+    cout << "Ingrese nombre completo: ";
+    getline(cin, nombre);
 
-    cout<<" \n Estudiante registrado  \n" <<estudiante[cantidadEstudiantes].nombre;
-    cout<<" \n de identificacion nro "<<estudiante[cantidadEstudiantes].identificacion;
-    cout<<" \n con una edad declarada de "<<estudiante[cantidadEstudiantes].edad;
+    cout << "Ingrese grado: ";
+    getline(cin, grado);
+
+    cout << "Ingrese seccion: ";
+    getline(cin, seccion);
+
+    // Guardamos: nombre,grado,seccion
+    archivo << nombre << "," << grado << "," << seccion << endl;
+    cout << "Registro exitoso\n";
+
+    archivo.close();
 }
 
-void registrarLibro(Libro libros[] , int cantidadLibros) {
-     cout<<" \n ingrese codigo del libro \n";
-    cin>>libros[cantidadLibros].codigo;
-    cout<<" \n ingrese fecha formato de año ejemplo 2025  \n";
-    cin>>libros[cantidadLibros].year;
-    cout<<" \n ingrese el nombre del Libro \n";
-    cin.ignore();
-    getline(cin, libros[cantidadLibros].nombre);
-    cout<<" \n ingrese el nombre del Autor \n";
-    cin.ignore();
-    getline(cin, libros[cantidadLibros].autor);
+void mostrarEstudiantes() {
+    ifstream archivo("contactos.txt");
 
-    cout<<" \n Libro registrado  \n" <<libros[cantidadLibros].nombre;
-    cout<<" \n  ISBN "<<libros[cantidadLibros].codigo;
-    cout<<" \n de año "<<libros[cantidadLibros].year;
-     cout<<" \n Autor "<<libros[cantidadLibros].autor;
+    if (!archivo) {
+        cout << "No hay estudiantes registrados\n";
+        return;
+    }
+
+    string linea;
+    cout << "\n--- Lista de Estudiantes ---\n";
+
+    while (getline(archivo, linea)) {
+        // Logica para separar los 3 campos: nombre, grado, seccion
+        size_t pos1 = linea.find(",");
+        string nombre = linea.substr(0, pos1);
+
+        string resto = linea.substr(pos1 + 1);
+        size_t pos2 = resto.find(",");
+        string grado = resto.substr(0, pos2);
+        string seccion = resto.substr(pos2 + 1);
+
+        cout << "Nombre: " << nombre << " | Grado: " << grado << " | Seccion: " << seccion << "\n";
+    }
+
+    archivo.close();
 }
-string buscarLibro(Libro libros[], int identificacion, int cantidadLibros){
-    string encontrado="No encontrado ";
-    for(int i=0; i<cantidadLibros; i++){
-        if(identificacion==libros[i].codigo){
-            encontrado=libros[i].nombre;
+
+void buscarEstudiante() {
+    ifstream archivo("contactos.txt");
+
+    if (!archivo) {
+        cout << "No hay estudiantes registrados\n";
+        return;
+    }
+
+    string linea, nombreBuscar;
+    bool encontrado = false;
+
+    // Limpiamos el buffer para leer el nombre completo a buscar
+    cin.ignore();
+    cout << "\nIngrese nombre a buscar: ";
+    getline(cin, nombreBuscar);
+
+    while (getline(archivo, linea)) {
+        // Logica para extraer el nombre
+        size_t pos1 = linea.find(",");
+        string nombre = linea.substr(0, pos1);
+
+        string resto = linea.substr(pos1 + 1);
+        size_t pos2 = resto.find(",");
+        string grado = resto.substr(0, pos2);
+        string seccion = resto.substr(pos2 + 1);
+
+        if (nombre == nombreBuscar) {
+            cout << "\nEstudiante encontrado:\n";
+            cout << "Nombre: " << nombre << " | Grado: " << grado << " | Seccion: " << seccion << "\n";
+            encontrado = true;
         }
     }
-    return encontrado;
-}
-void listarLibros(Libro libros[] , int cantidadLibros) {
-       cout<<" \n ********* LISTADO DE LIBROS ******* \n";
-    for(int i=0; i<cantidadLibros; i++){
-        cout<<" \n Libro  \n" <<libros[i].nombre;
-        cout<<" \n  ISBN "<<libros[i].codigo;
-        cout<<" \n de año "<<libros[i].year;
-        cout<<" \n Autor "<<libros[i].autor;
+
+    if (!encontrado) {
+        cout << "Estudiante no encontrado\n";
     }
 
+    archivo.close();
 }
 
-int main()
-{
+// -------------------------------
+// --- FUNCIONES DE NOTICIAS ---
+// -------------------------------
 
-Persona estudiante[20];
-Libro libros[20];
-int  respuestaEstudiante=1,cantidadEstudiantes=0, cantidadLibros=0;
-int respuestaLibro=1, respuestaBusquedaLibro=1;
-int codigoBuscar=0;
-/* seccion del estudiante */
-while (respuestaEstudiante>0){
-    registrarEstudiante(estudiante, cantidadEstudiantes);
-    cantidadEstudiantes++;
+void agregarNoticia() {
+    ofstream archivo("noticias.txt", ios::app);
 
-    menu ();
-    cin>>respuestaEstudiante;
-} /* FIN seccion del estudiante */
+    if (!archivo) {
+        cout << "Error al abrir el archivo de noticias\n";
+        return;
+    }
 
-/* seccion del Libro */
-while (respuestaLibro>0){
-    registrarLibro(libros, cantidadLibros);
-    cantidadLibros++;
+    string titulo, cuerpo;
 
-    menu ();
-    cin>>respuestaLibro;
+    // Obtenemos la fecha actual (ctime no usa acentos)
+    time_t tiempo = time(0);
+    tm* info = localtime(&tiempo);
+    string fecha = to_string(info->tm_mday) + "/" +
+                    to_string(1 + info->tm_mon) + "/" +
+                    to_string(1900 + info->tm_year);
+
+    cin.ignore();
+    cout << "\nIngrese titulo: ";
+    getline(cin, titulo);
+
+    cout << "Ingrese contenido: ";
+    getline(cin, cuerpo);
+
+    // Guardamos: Fecha|titulo|cuerpo
+    archivo << fecha << "|" << titulo << "|" << cuerpo << endl;
+    cout << "Noticia registrada\n";
+
+    archivo.close();
 }
 
-/* libros disponible */
+void mostrarNoticias() {
+    ifstream archivo("noticias.txt");
 
-    listarLibros(libros, cantidadLibros);
+    if (!archivo) {
+        cout << "No hay noticias registradas\n";
+        return;
+    }
 
-/* FIN libros disponible */
+    string linea;
+    int contador = 1;
 
-/* FIN seccion del Libro */
-while (respuestaBusquedaLibro>0){
-string nombreResultadoBusquedaLibro;
-    cout<<" \n  ingrese el codigo del libro que quieres \n ";
-    cin>>codigoBuscar;
-    nombreResultadoBusquedaLibro=buscarLibro(libros, codigoBuscar, cantidadLibros);
-    cout<<" resultado de la busqueda "<< nombreResultadoBusquedaLibro;
+    cout << "\n--- Noticias del Liceo ---\n";
 
-    menu ();
-    cin>>respuestaBusquedaLibro;
+    while (getline(archivo, linea)) {
+        // Logica para separar los 3 campos: fecha, titulo, cuerpo (separador '|')
+        size_t pos1 = linea.find("|");
+        string fecha = linea.substr(0, pos1);
+
+        string resto = linea.substr(pos1 + 1);
+        size_t pos2 = resto.find("|");
+        string titulo = resto.substr(0, pos2);
+        string cuerpo = resto.substr(pos2 + 1);
+
+        cout << "(" << contador << ") [" << fecha << "] " << titulo << "\n";
+        cout << "Contenido: " << cuerpo << "\n";
+        contador++;
+    }
+
+    archivo.close();
 }
 
+// -------------------------------
+// --- MENU PRINCIPAL ---
+// -------------------------------
 
+int main() {
+    int opcion;
+
+    do {
+        cout << "\n===== MENU PRINCIPAL =====\n";
+        cout << "1. Registrar estudiante\n";
+        cout << "2. Ver estudiantes\n";
+        cout << "3. Buscar estudiante\n";
+        cout << "4. Registrar noticia\n";
+        cout << "5. Ver noticias\n";
+        cout << "6. Salir\n";
+        cout << "Ingrese opcion: ";
+
+        if (!(cin >> opcion)) {
+            cout << "Entrada invalida\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            opcion = 0;
+            continue;
+        }
+
+        switch (opcion) {
+            case 1: agregarEstudiante(); break;
+            case 2: mostrarEstudiantes(); break;
+            case 3: buscarEstudiante(); break;
+            case 4: agregarNoticia(); break;
+            case 5: mostrarNoticias(); break;
+            case 6: cout << "Hasta luego\n"; break;
+            default: cout << "Opcion no valida\n";
+        }
+
+    } while (opcion != 6);
+
+    return 0;
 }
