@@ -4,7 +4,7 @@ using namespace std;
 
 // Estructura para guardar datos de un usuario
 struct Usuario {
-    int id;
+    nt id;
     string nombre;
     string correo;
     string contrasena;
@@ -131,3 +131,4 @@ int main() {
 
     return 0;
 }
+
