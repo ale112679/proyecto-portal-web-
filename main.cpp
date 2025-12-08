@@ -206,7 +206,7 @@ int main() {
             default: cout << "Opcion no valida\n";
         }
 
-    } while (opcion != 6);
+    } whil (opcion != 6);
 
     return 0;
 }
