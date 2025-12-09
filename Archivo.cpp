@@ -1,7 +1,7 @@
 #include <iostream>
-#include <fstream>// Manejo de archivos
-#include <string>// Cadenas de caracteres
-#include <ctime>// Para fecha de noticias
+#include <fstream>//Manejo de archivos
+#include <string>//Cadenas de caracteres
+#include <ctime>//Para fecha de noticias
 
 using namespace std;
 
@@ -13,7 +13,7 @@ void agregarEstudiante() {
     ofstream archivo("contactos.txt", ios::app);
 
     if (!archivo) {
-        cout << "Error al abrir el archivo de estudiantes\n";
+        cout<< "Error al abrir el archivo de estudiantes\n";
         return;
     }
 
@@ -179,14 +179,14 @@ int main() {
     int opcion;
 
     do {
-        cout << "\n===== MENU PRINCIPAL =====\n";
-        cout << "1. Registrar estudiante\n";
-        cout << "2. Ver estudiantes\n";
-        cout << "3. Buscar estudiante\n";
-        cout << "4. Registrar noticia\n";
-        cout << "5. Ver noticias\n";
-        cout << "6. Salir\n";
-        cout << "Ingrese opcion: ";
+        cout<< "\n===== MENU PRINCIPAL =====\n";
+        cout<< "1. Registrar estudiante\n";
+        cout<< "2. Ver estudiantes\n";
+        cout<< "3. Buscar estudiante\n";
+        cout<< "4. Registrar noticia\n";
+        cout<< "5. Ver noticias\n";
+        cout<< "6. Salir\n";
+        cout<< "Ingrese opcion: ";
 
         if (!(cin >> opcion)) {
             cout << "Entrada invalida\n";
@@ -210,4 +210,3 @@ int main() {
 
     return 0;
 }
-
